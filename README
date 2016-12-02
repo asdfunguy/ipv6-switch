@@ -1,0 +1,9 @@
+I wrote this script due to my computer directly connecting to domains
+via IPv6 while running an OpenVPN session. Obviously, if I wanted to 
+directly connect to said websites, I wouldn't be running the afore-
+mentioned VPN session.
+
+This script lists out the current network interfaces, and allows the
+user to choose which to disable/enable by typing the number adjacent to
+the interface into the input area, then pressing the return key.
+

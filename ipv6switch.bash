@@ -3,7 +3,7 @@
 :   '
 
 This script creates a list of network interfaces, allowing the user to selectively
-enable/disable IPv6 on the available network interfaces
+enable/disable IPv6 on the available network interfaces.
  
 
 ------------------------------------------------------------------------|

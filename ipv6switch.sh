@@ -3,8 +3,10 @@
 :   '
 
 This script creates a list of network interfaces, allowing the user to selectively
-enable/disable IPv6 on the available network interfaces.
- 
+enable/disable IPv6 on the available network interfaces. I wrote this to aid in the
+prevention of IPV6 leaks while using OpenVPN, if your VPN server only connects via IPv4.
+
+https://github.com/asdfunguy
 
 ------------------------------------------------------------------------|
                                                                         |
@@ -18,10 +20,12 @@ MAINMENU ()
 
     networkArray=(/sys/class/net/*)
 
-    infCount=${#networkArray[@]}
+    # $infCount will help check against user input later on.
+    # We must subtract it by 1 as to account for the fact that the user will be selecting
+    # against an array, which begin counting with the value 0.
+    infCount=$(( ${#networkArray[@]}-$((1)) ))
      
     # Draw the list and junk menu:
-    
     NETIFLIST
     OPTIONSLIST
     echo
@@ -55,6 +59,7 @@ MENU_ISINT ()
     then
         echo
         printf '%s\t%s\n' "" "-- ERROR : It seems that you entered a number less than the range of available network interfaces... somehow. --"
+        echo
 
     # Only correct entries should get to this point:
     else
@@ -111,6 +116,12 @@ MENU_NOTINT ()
         netstat -i
         echo
 
+    elif [[ "$userSel" == [qQ] ]] ;
+    then
+        echo
+        printf '%s\t%s\n%s\n' "" "Exiting the script and returning to shell..." "" && sleep 0.5
+        exit
+
     # this accounts for any text that is not a valid command: 
     else
         echo
@@ -155,7 +166,7 @@ IP6SWITCH ()
 ------------------------------------------------------------------------|
                                                                         |
 All of these functions below do the pretty/dirty work, like drawing     |
-separation lines or printing lists.                                     |
+separation lines,  printing lists, or centering text.                   |
                                                                         |
 ------------------------------------------------------------------------|'
 
@@ -204,7 +215,7 @@ NETIFLIST ()
             report="UNKNOWN"
         fi
         
-        # put it all together:
+        # Now we put it all together:
         printf '%s\t%s\t%s\n' "  »  $counter. $netinf" "-- IPv6: $report" ""
         counter=$((counter+1))
     done
@@ -219,7 +230,8 @@ OPTIONSLIST ()
     printf '%s\n' "  ╠═» Select an interface to switch IPv6 on/off by entering its listed number."
     printf '%s\n' "  ╠═» [c] - clears screen, resets list and menu."
     printf '%s\n' "  ╠═» [i] - reads ifconfig output (runs: \$sudo ifconfig -a | less)."
-    printf '%s\n' "  ╚═» [n] - prints shorter list of interface details (runs: \$netstat -i)."
+    printf '%s\n' "  ╠═» [n] - prints shorter list of interface details (runs: \$netstat -i)."
+    printf '%s\n' "  ╚═» [q] - Exit the script and return to shell prompt."
     echo 
     rulem "[INPUT YOUR DECISION]" "─" && sleep 0.25
 }
